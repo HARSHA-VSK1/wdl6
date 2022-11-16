@@ -2,7 +2,6 @@ const request = require("supertest");
 
 const db = require("../models/index");
 const app = require("../app");
-const { json } = require("sequelize");
 
 let server, agent;
 
@@ -32,8 +31,8 @@ describe("Todo Application", function () {
     expect(response.header["content-type"]).toBe(
       "application/json; charset=utf-8"
     );
-    const PR = JSON.parse(response.text);
-    expect(PR.id).toBeDefined();
+    const parsedResponse = JSON.parse(response.text);
+    expect(parsedResponse.id).toBeDefined();
   });
 
   test("Marks a todo with the given ID as complete", async () => {
@@ -42,10 +41,10 @@ describe("Todo Application", function () {
       dueDate: new Date().toISOString(),
       completed: false,
     });
-    const PR = JSON.parse(response.text);
-    const todoID = PR.id;
+    const parsedResponse = JSON.parse(response.text);
+    const todoID = parsedResponse.id;
 
-    expect(PR.completed).toBe(false);
+    expect(parsedResponse.completed).toBe(false);
 
     const markCompleteResponse = await agent
       .put(`/todos/${todoID}/markASCompleted`)
@@ -66,10 +65,10 @@ describe("Todo Application", function () {
       completed: false,
     });
     const response = await agent.get("/todos");
-    const PR = JSON.parse(response.text);
+    const parsedResponse = JSON.parse(response.text);
 
-    expect(PR.length).toBe(4);
-    expect(PR[3]["title"]).toBe("Buy ps3");
+    expect(parsedResponse.length).toBe(4);
+    expect(parsedResponse[3]["title"]).toBe("Buy ps3");
   });
 
   test("Deletes a todo with the given ID if it exists and sends a boolean response", async () => {
@@ -80,8 +79,8 @@ describe("Todo Application", function () {
       completed: false,
     });
 
-    const PR = JSON.parse(response.text);
-    const todoID = PR.id;
+    const parsedResponse = JSON.parse(response.text);
+    const todoID = parsedResponse.id;
 
     const deleteExistingRecordResponse = await agent
       .delete(`/todos/${todoID}`)
