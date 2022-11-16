@@ -2,6 +2,7 @@ const request = require("supertest");
 
 const db = require("../models/index");
 const app = require("../app");
+const { json } = require("sequelize");
 
 let server, agent;
 
@@ -31,8 +32,8 @@ describe("Todo Application", function () {
     expect(response.header["content-type"]).toBe(
       "application/json; charset=utf-8"
     );
-    const parsedResponse = JSON.parse(response.text);
-    expect(parsedResponse.id).toBeDefined();
+    const PR = JSON.parse(response.text);
+    expect(PR.id).toBeDefined();
   });
 
   test("Marks a todo with the given ID as complete", async () => {
@@ -41,10 +42,10 @@ describe("Todo Application", function () {
       dueDate: new Date().toISOString(),
       completed: false,
     });
-    const parsedResponse = JSON.parse(response.text);
-    const todoID = parsedResponse.id;
+    const PR = JSON.parse(response.text);
+    const todoID = PR.id;
 
-    expect(parsedResponse.completed).toBe(false);
+    expect(PR.completed).toBe(false);
 
     const markCompleteResponse = await agent
       .put(`/todos/${todoID}/markASCompleted`)
@@ -65,13 +66,36 @@ describe("Todo Application", function () {
       completed: false,
     });
     const response = await agent.get("/todos");
-    const parsedResponse = JSON.parse(response.text);
+    const PR = JSON.parse(response.text);
 
-    expect(parsedResponse.length).toBe(4);
-    expect(parsedResponse[3]["title"]).toBe("Buy ps3");
+    expect(PR.length).toBe(4);
+    expect(PR[3]["title"]).toBe("Buy ps3");
   });
 
   test("Deletes a todo with the given ID if it exists and sends a boolean response", async () => {
     // FILL IN YOUR CODE HERE
+    const response = await agent.post("/todos").send({
+      title: "Buy a milk powder",
+      dueDate: new Date().toISOString(),
+      completed: false,
+    });
+
+    const PR = JSON.parse(response.text);
+    const todoID = PR.id;
+
+    const deleteExistingRecordResponse = await agent
+      .delete(`/todos/${todoID}`)
+      .send();
+    const parsedDeleteExistingRecordResponse = JSON.parse(
+      deleteExistingRecordResponse.text
+    );
+
+    expect(parsedDeleteExistingRecordResponse).toBe(true);
+
+    const deleteNonExistingRecord = await agent.delete(`/todos/1321`).send();
+    const parseddeleteNonExistingRecord = JSON.parse(
+      deleteNonExistingRecord.text
+    );
+    expect(parseddeleteNonExistingRecord).toBe(false);
   });
 });
