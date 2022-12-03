@@ -136,7 +136,7 @@ describe("Todo Application", function () {
     expect(parsedUpdateResponse.completed).toBe(false);
   });
 
-  test("Delete a todo with the given ID if it exists and sends a boolean response", async () => {
+  test("Delete a todo with the given ID", async () => {
     const agent = request.agent(server);
     await login(agent, "user.a@test.com", "12345678");
     let res = await agent.get("/todos");
