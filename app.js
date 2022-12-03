@@ -129,21 +129,23 @@ app.get("/signup", (request, response) => {
   });
 });
 
+//signup validation for various fields with error messages
+
 app.post("/users", async (request, response) => {
   if (!request.body.firstName) {
-    request.flash("error", "Please enter your first name");
+    request.flash("error", "Please enter your First Name");
     return response.redirect("/signup");
   }
   if (!request.body.email) {
-    request.flash("error", "Please enter email ID");
+    request.flash("error", "Please enter Email ID");
     return response.redirect("/signup");
   }
   if (!request.body.password) {
-    request.flash("error", "Please enter your password");
+    request.flash("error", "Please enter your Password");
     return response.redirect("/signup");
   }
   if (request.body.password < 8) {
-    request.flash("error", "Password length should be atleast 8");
+    request.flash("error", "Password length should be atleast 8 characters");
     return response.redirect("/signup");
   }
   const hashedPwd = await bcrypt.hash(request.body.password, saltRounds);
@@ -195,17 +197,6 @@ app.get("/signout", (request, response, next) => {
   });
 });
 
-// app.get("/todos", async function (_request, response) {
-//   console.log("Processing list of all Todos ...");
-//   // FILL IN YOUR CODE HERE
-//   try {
-//     const todos = await Todo.findAll();
-//     return response.json(todos);
-//   } catch (error) {
-//     console.log(error);
-//     return response.status(422).json(error);
-//   }
-// });
 
 app.get(
   "/todos/:id",
@@ -221,16 +212,18 @@ app.get(
   }
 );
 
+// Todo list validation using date,length validators
+
 app.post(
   "/todos",
   connectEnsureLogin.ensureLoggedIn(),
   async function (request, response) {
     if (request.body.title.length < 5) {
-      request.flash("error", "Title length should be atleast 5");
+      request.flash("error", "Title length should be atleast 5 characters");
       return response.redirect("/todos");
     }
     if (!request.body.dueDate) {
-      request.flash("error", "Please select a due date");
+      request.flash("error", "Please select a Due Date");
       return response.redirect("/todos");
     }
     try {
@@ -268,7 +261,7 @@ app.delete(
   "/todos/:id",
   connectEnsureLogin.ensureLoggedIn(),
   async function (request, response) {
-    console.log("We have to delete a Todo with ID: ", request.params.id);
+    console.log("We need to delete a Todo with ID: ", request.params.id);
     // FILL IN YOUR CODE HERE
     try {
       const res = await Todo.remove(request.params.id, request.user.id);
@@ -277,9 +270,7 @@ app.delete(
       console.log(error);
       return response.status(422).json(error);
     }
-    // First, we have to query our database to delete a Todo by ID.
-    // Then, we have to respond back with true/false based on whether the Todo was deleted or not.
-    // response.send(true)
+    
   }
 );
 
