@@ -1,6 +1,13 @@
 body {
-  background-color: white;
   font-family: sans-serif;
+  background: #ffffff;
+  padding: 3%;
+}
+
+table,
+th,
+td {
+  border: 1px solid black;
 }
 
 .Todo-Item:hover .trash-icon {
